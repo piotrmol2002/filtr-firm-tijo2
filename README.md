@@ -41,6 +41,19 @@ zapytanie SQL wybierające firmy z bazy. Obie muszą dawać ten sam wynik.
 Baza zawiera 300 fikcyjnych firm generowanych deterministycznie. Prawdziwe dane z rejestrów nie są
 używane, ponieważ nazwa jednoosobowej działalności w CEIDG to imię i nazwisko osoby.
 
+## Interfejs użytkownika
+
+Strona główna (`/`) ma trzy części:
+
+- **Profil klienta**: kody PKD, województwa, formy prawne, wiek firmy w dniach, data odniesienia
+  i zgoda na firmy przed rozpoczęciem działalności,
+- **Pasujące firmy**: tabela firm z bazy spełniających profil, z liczbą wyników i stronicowaniem
+  po 20 pozycji,
+- **Ocena pojedynczej firmy**: formularz z danymi jednej firmy i werdykt wraz z listą powodów
+  odrzucenia.
+
+Niepoprawne kody PKD i zakres wieku są wykrywane jeszcze przed wysłaniem zapytania.
+
 ## Uruchomienie projektu
 
 Wymagany Docker z Docker Compose.
@@ -49,13 +62,14 @@ Wymagany Docker z Docker Compose.
 docker compose up --build
 ```
 
-API działa pod adresem `http://localhost:8000`, a interaktywna dokumentacja pod
-`http://localhost:8000/docs`. Przy pierwszym uruchomieniu baza jest wypełniana przykładowymi danymi.
+Interfejs użytkownika działa pod adresem `http://localhost:8000`, a interaktywna dokumentacja API
+pod `http://localhost:8000/docs`. Przy pierwszym uruchomieniu baza jest wypełniana przykładowymi danymi.
 
 ## Dokumentacja API
 
 | Metoda | Ścieżka | Opis |
 |---|---|---|
+| GET | `/` | Interfejs użytkownika |
 | GET | `/health` | Stan usługi |
 | GET | `/companies` | Lista firm z bazy według filtrów: `source`, `pkd`, `voivodeship`, `legal_form`, `start_from`, `start_to`, `has_phone`, `has_email`, `limit` (1-500), `offset` |
 | POST | `/qualification/evaluate` | Ocena jednej firmy względem profilu: wynik i lista powodów odrzucenia |
@@ -95,4 +109,5 @@ Odpowiedź:
 - SQLAlchemy 2 (asyncio) z asyncpg
 - PostgreSQL 18
 - Docker Compose
+- HTML, CSS i JavaScript bez frameworka (interfejs użytkownika)
 - uv (zarządzanie zależnościami), ruff (lint i formatowanie)
