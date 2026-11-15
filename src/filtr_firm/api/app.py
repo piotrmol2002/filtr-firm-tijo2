@@ -1,9 +1,13 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import date
+from datetime import date, datetime
+from pathlib import Path
 from typing import Annotated
+from zoneinfo import ZoneInfo
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from filtr_firm.api.schemas import CompanyPageOut, EvaluateIn, PreviewIn, VerdictOut
@@ -14,6 +18,8 @@ from filtr_firm.domain.company_filter import DEFAULT_LIMIT, MAX_LIMIT, CompanyFi
 from filtr_firm.domain.prefilter import evaluate, filter_for
 
 INVALID_FILTER = "Nieprawidłowe parametry filtra."
+REGISTRY_ZONE = ZoneInfo("Europe/Warsaw")
+WEB_DIR = Path(__file__).resolve().parent.parent / "web"
 
 
 @asynccontextmanager
@@ -31,6 +37,7 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 
 async def get_session(request: Request) -> AsyncIterator[AsyncSession]:
@@ -43,11 +50,16 @@ def get_repository(session: Annotated[AsyncSession, Depends(get_session)]) -> Co
 
 
 def get_today() -> date:
-    return date.today()
+    return datetime.now(REGISTRY_ZONE).date()
 
 
 Repository = Annotated[CompanyRepository, Depends(get_repository)]
 Today = Annotated[date, Depends(get_today)]
+
+
+@app.get("/", include_in_schema=False)
+async def index() -> FileResponse:
+    return FileResponse(WEB_DIR / "index.html")
 
 
 @app.get("/health", tags=["system"])

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Filtr firm</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Filtr firm</h1>
+    <p>Wstępna kwalifikacja nowo zarejestrowanych firm z rejestrów CEIDG i KRS</p>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="profile-title">
+      <h2 id="profile-title">Profil klienta</h2>
+      <p class="hint">Puste pole oznacza brak ograniczenia.</p>
+      <form id="profile-form" novalidate>
+        <label class="field">
+          <span>Kody PKD (oddzielone przecinkami)</span>
+          <input id="pkd" name="pkd" type="text" placeholder="np. 62, 7311Z" autocomplete="off">
+        </label>
+
+        <fieldset class="field">
+          <legend>Województwa</legend>
+          <div id="voivodeships" class="checks"></div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>Formy prawne</legend>
+          <div id="legal-forms" class="checks"></div>
+        </fieldset>
+
+        <div class="row">
+          <label class="field">
+            <span>Wiek firmy od (dni)</span>
+            <input id="age-from" name="age_from_days" type="number" min="0" max="3650">
+          </label>
+          <label class="field">
+            <span>Wiek firmy do (dni)</span>
+            <input id="age-to" name="age_to_days" type="number" min="0" max="3650">
+          </label>
+          <label class="field">
+            <span>Data odniesienia</span>
+            <input id="reference-date" name="reference_date" type="date">
+          </label>
+        </div>
+
+        <label class="check">
+          <input id="include-pre-start" type="checkbox">
+          Uwzględnij firmy, które jeszcze nie rozpoczęły działalności
+        </label>
+
+        <p id="profile-error" class="error" role="alert" hidden></p>
+        <button type="submit">Pokaż pasujące firmy</button>
+      </form>
+    </section>
+
+    <section class="card" aria-labelledby="results-title">
+      <h2 id="results-title">Pasujące firmy</h2>
+      <p id="results-summary" class="hint">Ustaw profil i wybierz „Pokaż pasujące firmy”.</p>
+      <div class="table-wrap">
+        <table id="results" hidden>
+          <thead>
+            <tr>
+              <th>Nazwa</th>
+              <th>Rejestr</th>
+              <th>Forma prawna</th>
+              <th>Województwo</th>
+              <th>Miejscowość</th>
+              <th>PKD</th>
+              <th>Data rozpoczęcia</th>
+              <th>Telefon</th>
+              <th>E-mail</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="pager" id="pager" hidden>
+        <button type="button" id="prev-page" class="secondary">Poprzednia strona</button>
+        <span id="page-info"></span>
+        <button type="button" id="next-page" class="secondary">Następna strona</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="evaluate-title">
+      <h2 id="evaluate-title">Ocena pojedynczej firmy</h2>
+      <p class="hint">Firma jest oceniana względem profilu ustawionego powyżej.</p>
+      <form id="company-form" novalidate>
+        <div class="row">
+          <label class="field">
+            <span>Nazwa firmy</span>
+            <input id="company-name" type="text" required>
+          </label>
+          <label class="field">
+            <span>Rejestr</span>
+            <select id="company-source">
+              <option value="ceidg">CEIDG</option>
+              <option value="krs">KRS</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Forma prawna</span>
+            <select id="company-legal-form"></select>
+          </label>
+        </div>
+        <div class="row">
+          <label class="field">
+            <span>Województwo</span>
+            <select id="company-voivodeship"></select>
+          </label>
+          <label class="field">
+            <span>Miejscowość</span>
+            <input id="company-city" type="text">
+          </label>
+          <label class="field">
+            <span>Data rozpoczęcia działalności</span>
+            <input id="company-event-date" type="date">
+          </label>
+        </div>
+        <div class="row">
+          <label class="field">
+            <span>Główny kod PKD</span>
+            <input id="company-pkd-main" type="text" placeholder="np. 6210B" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Pozostałe kody PKD (oddzielone przecinkami)</span>
+            <input id="company-pkd-codes" type="text" autocomplete="off">
+          </label>
+        </div>
+
+        <p id="company-error" class="error" role="alert" hidden></p>
+        <button type="submit">Oceń firmę</button>
+      </form>
+      <div id="verdict" class="verdict" hidden>
+        <p id="verdict-title"></p>
+        <ul id="verdict-reasons"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
